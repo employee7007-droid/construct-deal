@@ -57,9 +57,14 @@ const RFQList = () => {
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1 relative">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input placeholder="Search RFQs..." className="pl-10" />
+                    <Input 
+                      placeholder="Search RFQs..." 
+                      className="pl-10" 
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
                   </div>
-                  <Select defaultValue="all">
+                  <Select value={status} onValueChange={setStatus}>
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
