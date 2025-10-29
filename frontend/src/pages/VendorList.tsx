@@ -1,4 +1,6 @@
 import { Search, MapPin, Star } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
 import { Button } from "@/components/ui/button";
@@ -7,50 +9,31 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useGetVendorsQuery } from "@/store/api/vendorApi";
+import { useGetCategoriesQuery } from "@/store/api/categoryApi";
+import { useAppSelector } from "@/store/hooks";
 
 const VendorList = () => {
-  const vendors = [
-    {
-      id: "1",
-      name: "CoolTech HVAC Solutions",
-      category: "HVAC Contractor",
-      rating: 4.8,
-      reviews: 124,
-      location: "Bangalore",
-      projectsCompleted: 87,
-      verified: true,
-    },
-    {
-      id: "2",
-      name: "PowerGrid Electrical Services",
-      category: "Electrical Contractor",
-      rating: 4.6,
-      reviews: 98,
-      location: "Mumbai",
-      projectsCompleted: 156,
-      verified: true,
-    },
-    {
-      id: "3",
-      name: "SafeGuard Fire Systems",
-      category: "Fire Safety Contractor",
-      rating: 4.9,
-      reviews: 76,
-      location: "Delhi",
-      projectsCompleted: 64,
-      verified: true,
-    },
-    {
-      id: "4",
-      name: "BuildRight Construction",
-      category: "General Contractor",
-      rating: 4.5,
-      reviews: 203,
-      location: "Pune",
-      projectsCompleted: 234,
-      verified: false,
-    },
-  ];
+  const { user } = useAppSelector((state) => state.auth);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("all");
+  const [city, setCity] = useState("all");
+  const [page, setPage] = useState(1);
+  
+  const queryParams = {
+    ...(search && { search }),
+    ...(category !== "all" && { category }),
+    ...(city !== "all" && { city }),
+    page,
+    limit: 12,
+  };
+  
+  const { data: vendorsData, isLoading, error } = useGetVendorsQuery(queryParams);
+  const { data: categoriesData } = useGetCategoriesQuery({ page: 1, limit: 50 });
+  
+  const vendors = vendorsData?.data?.vendors || [];
+  const categories = categoriesData?.data?.categories || [];
 
   return (
     <div className="min-h-screen bg-background">
