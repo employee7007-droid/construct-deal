@@ -91,56 +91,111 @@ const VendorList = () => {
             </Card>
 
             <div className="grid gap-4 md:grid-cols-2">
-              {vendors.map((vendor) => (
-                <Card key={vendor.id} className="hover:shadow-md transition-smooth">
-                  <CardHeader>
-                    <div className="flex items-start gap-4">
-                      <Avatar className="h-16 w-16">
-                        <AvatarFallback className="bg-primary/10 text-primary text-xl font-semibold">
-                          {vendor.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")
-                            .slice(0, 2)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <CardTitle className="text-lg">{vendor.name}</CardTitle>
-                          {vendor.verified && (
-                            <Badge variant="default" className="bg-success">
-                              Verified
-                            </Badge>
+              {isLoading ? (
+                // Loading skeleton
+                Array(6).fill(0).map((_, i) => (
+                  <Card key={i} className="animate-pulse">
+                    <CardHeader>
+                      <div className="flex items-start gap-4">
+                        <Skeleton className="h-16 w-16 rounded-full" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-6 w-3/4" />
+                          <Skeleton className="h-4 w-1/2" />
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <Skeleton className="h-20 w-full" />
+                    </CardContent>
+                  </Card>
+                ))
+              ) : error ? (
+                <div className="col-span-2 text-center py-8">
+                  <p className="text-muted-foreground">Error loading vendors. Please try again later.</p>
+                </div>
+              ) : vendors.length === 0 ? (
+                <div className="col-span-2 text-center py-8">
+                  <p className="text-muted-foreground">No vendors found matching your criteria.</p>
+                </div>
+              ) : (
+                vendors.map((vendor: any) => (
+                  <Link key={vendor.id} to={`/vendors/${vendor.id}`}>
+                    <Card className="hover:shadow-md transition-smooth cursor-pointer h-full">
+                      <CardHeader>
+                        <div className="flex items-start gap-4">
+                          <Avatar className="h-16 w-16">
+                            <AvatarFallback className="bg-primary/10 text-primary text-xl font-semibold">
+                              {(vendor.companyName || vendor.name || "V")
+                                .split(" ")
+                                .map((n: string) => n[0])
+                                .join("")
+                                .slice(0, 2)
+                                .toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 space-y-2">
+                            <div className="flex items-center gap-2">
+                              <CardTitle className="text-lg">{vendor.companyName || vendor.name}</CardTitle>
+                              {vendor.kycStatus === 'approved' && (
+                                <Badge variant="default" className="bg-green-600">
+                                  Verified
+                                </Badge>
+                              )}
+                            </div>
+                            <CardDescription>
+                              <div className="flex flex-wrap gap-1">
+                                {vendor.categories?.slice(0, 2).map((cat: any, idx: number) => (
+                                  <Badge key={idx} variant="outline" className="text-xs">
+                                    {cat.name || cat}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </CardDescription>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1">
+                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                            <span className="font-semibold text-foreground">
+                              {vendor.averageRating ? vendor.averageRating.toFixed(1) : "New"}
+                            </span>
+                            {vendor.ratingCount && (
+                              <span className="text-sm text-muted-foreground">
+                                ({vendor.ratingCount} reviews)
+                              </span>
+                            )}
+                          </div>
+                          {vendor.serviceCities?.length > 0 && (
+                            <div className="flex items-center gap-1 text-muted-foreground">
+                              <MapPin className="h-4 w-4" />
+                              <span className="text-sm">{vendor.serviceCities[0]}</span>
+                              {vendor.serviceCities.length > 1 && (
+                                <span className="text-xs">+{vendor.serviceCities.length - 1}</span>
+                              )}
+                            </div>
                           )}
                         </div>
-                        <CardDescription>
-                          <Badge variant="outline">{vendor.category}</Badge>
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 fill-warning text-warning" />
-                        <span className="font-semibold text-foreground">{vendor.rating}</span>
-                        <span className="text-sm text-muted-foreground">({vendor.reviews} reviews)</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <MapPin className="h-4 w-4" />
-                        <span className="text-sm">{vendor.location}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between pt-4 border-t border-border">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Projects Completed</p>
-                        <p className="text-lg font-semibold text-foreground">{vendor.projectsCompleted}</p>
-                      </div>
-                      <Button>View Profile</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                        <div className="flex items-center justify-between pt-4 border-t border-border">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Status</p>
+                            <p className="text-sm font-medium">
+                              <Badge 
+                                variant={vendor.kycStatus === 'approved' ? 'default' : 'secondary'}
+                                className="capitalize"
+                              >
+                                {vendor.kycStatus || 'pending'}
+                              </Badge>
+                            </p>
+                          </div>
+                          <Button onClick={(e) => e.preventDefault()}>View Profile</Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))
+              )}
             </div>
           </div>
         </main>
