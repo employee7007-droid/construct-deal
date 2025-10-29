@@ -52,30 +52,38 @@ const VendorList = () => {
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1 relative">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input placeholder="Search vendors by name or category..." className="pl-10" />
+                    <Input 
+                      placeholder="Search vendors by name or category..." 
+                      className="pl-10" 
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
                   </div>
-                  <Select defaultValue="all">
+                  <Select value={category} onValueChange={setCategory}>
                     <SelectTrigger className="w-[200px]">
                       <SelectValue placeholder="Category" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Categories</SelectItem>
-                      <SelectItem value="hvac">HVAC Contractor</SelectItem>
-                      <SelectItem value="electrical">Electrical Contractor</SelectItem>
-                      <SelectItem value="fire">Fire Safety</SelectItem>
-                      <SelectItem value="general">General Contractor</SelectItem>
+                      {categories.map((cat: any) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
-                  <Select defaultValue="all">
+                  <Select value={city} onValueChange={setCity}>
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Location" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Locations</SelectItem>
-                      <SelectItem value="bangalore">Bangalore</SelectItem>
-                      <SelectItem value="mumbai">Mumbai</SelectItem>
-                      <SelectItem value="delhi">Delhi</SelectItem>
-                      <SelectItem value="pune">Pune</SelectItem>
+                      <SelectItem value="Bangalore">Bangalore</SelectItem>
+                      <SelectItem value="Mumbai">Mumbai</SelectItem>
+                      <SelectItem value="Delhi">Delhi</SelectItem>
+                      <SelectItem value="Pune">Pune</SelectItem>
+                      <SelectItem value="Chennai">Chennai</SelectItem>
+                      <SelectItem value="Hyderabad">Hyderabad</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
