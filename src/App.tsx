@@ -13,6 +13,13 @@ import RFQList from "./pages/RFQList";
 import VendorList from "./pages/VendorList";
 import CreateRFQ from "./pages/CreateRFQ";
 import RFQDetail from "./pages/RFQDetail";
+import VendorProfile from "./pages/VendorProfile";
+import ContractList from "./pages/ContractList";
+import ContractDetail from "./pages/ContractDetail";
+import InvoiceList from "./pages/InvoiceList";
+import InvoiceDetail from "./pages/InvoiceDetail";
+import BuildingList from "./pages/BuildingList";
+import DisputeList from "./pages/DisputeList";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,6 +71,62 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <RFQDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vendors/:id"
+              element={
+                <ProtectedRoute>
+                  <VendorProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/contracts"
+              element={
+                <ProtectedRoute>
+                  <ContractList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/contracts/:id"
+              element={
+                <ProtectedRoute>
+                  <ContractDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/invoices"
+              element={
+                <ProtectedRoute>
+                  <InvoiceList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/invoices/:id"
+              element={
+                <ProtectedRoute>
+                  <InvoiceDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/buildings"
+              element={
+                <ProtectedRoute allowedRoles={["org_owner", "facility_manager"]}>
+                  <BuildingList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/disputes"
+              element={
+                <ProtectedRoute>
+                  <DisputeList />
                 </ProtectedRoute>
               }
             />

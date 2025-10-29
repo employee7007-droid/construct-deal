@@ -25,6 +25,10 @@ export const invoiceApi = createApi({
       }),
       invalidatesTags: ['Invoice'],
     }),
+    getInvoices: builder.query({
+      query: ({ page = 1, limit = 10 }) => `/invoices?page=${page}&limit=${limit}`,
+      providesTags: ['Invoice'],
+    }),
     getInvoicesForContract: builder.query({
       query: ({ contractId, page = 1, limit = 10 }) =>
         `/invoices/contracts/${contractId}?page=${page}&limit=${limit}`,
@@ -77,6 +81,7 @@ export const invoiceApi = createApi({
 
 export const {
   useCreateInvoiceMutation,
+  useGetInvoicesQuery,
   useGetInvoicesForContractQuery,
   useGetInvoiceQuery,
   useApproveInvoiceMutation,
