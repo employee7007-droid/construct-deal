@@ -44,10 +44,12 @@ const RFQList = () => {
                 <h1 className="text-3xl font-bold text-foreground mb-2">Requests for Quotation</h1>
                 <p className="text-muted-foreground">Manage and track all your RFQs</p>
               </div>
-              <Button className="bg-accent hover:bg-accent-hover">
-                <Plus className="mr-2 h-4 w-4" />
-                Create RFQ
-              </Button>
+              <Link to="/rfqs/create">
+                <Button className="bg-accent hover:bg-accent-hover">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create RFQ
+                </Button>
+              </Link>
             </div>
 
             <Card>
