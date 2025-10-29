@@ -1,4 +1,6 @@
 import { Search, Filter, Plus } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
 import { Button } from "@/components/ui/button";
@@ -6,43 +8,29 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useGetRfqsQuery } from "@/store/api/rfqApi";
+import { useAppSelector } from "@/store/hooks";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const RFQList = () => {
-  const rfqs = [
-    {
-      id: "1",
-      title: "HVAC System Installation for Alpha Tower",
-      category: "HVAC Contractor",
-      building: "Alpha Tower",
-      budget: "₹3,00,000 - ₹4,00,000",
-      status: "active",
-      bids: 12,
-      closeDate: "2025-11-15",
-      visibility: "public",
-    },
-    {
-      id: "2",
-      title: "Complete Electrical Rewiring - Beta Complex",
-      category: "Electrical Contractor",
-      building: "Beta Complex",
-      budget: "₹5,50,000 - ₹7,00,000",
-      status: "active",
-      bids: 8,
-      closeDate: "2025-11-18",
-      visibility: "private",
-    },
-    {
-      id: "3",
-      title: "Fire Safety & Alarm System Installation",
-      category: "Fire Safety Contractor",
-      building: "Gamma Building",
-      budget: "₹2,00,000 - ₹2,50,000",
-      status: "closed",
-      bids: 15,
-      closeDate: "2025-10-20",
-      visibility: "public",
-    },
-  ];
+  const { user } = useAppSelector((state) => state.auth);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("all");
+  const [page, setPage] = useState(1);
+  
+  const queryParams = {
+    ...(search && { search }),
+    ...(status !== "all" && { status }),
+    page,
+    limit: 10,
+  };
+  
+  const { data: rfqsData, isLoading, error } = useGetRfqsQuery(queryParams);
+  const rfqs = rfqsData?.data?.rfqs || [];
+  
+  const formatCurrency = (min: number, max: number) => {
+    return `₹${min?.toLocaleString()} - ₹${max?.toLocaleString()}`;
+  };
 
   return (
     <div className="min-h-screen bg-background">
