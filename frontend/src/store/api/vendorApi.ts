@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../store';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  baseUrl: import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:3000/api',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
     if (token) {
@@ -30,8 +30,8 @@ export const vendorApi = createApi({
         const params = new URLSearchParams();
         if (category) params.append('category', category);
         if (city) params.append('city', city);
-        if (minRating) params.append('minRating', minRating);
-        if (featured) params.append('featured', featured);
+        if (minRating) params.append('minRating', minRating.toString());
+        if (featured) params.append('featured', featured.toString());
         params.append('page', page.toString());
         params.append('limit', limit.toString());
         return `/vendors?${params.toString()}`;

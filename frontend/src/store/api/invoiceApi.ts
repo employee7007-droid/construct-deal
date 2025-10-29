@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../store';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  baseUrl: import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:3000/api',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
     if (token) {
@@ -25,13 +25,12 @@ export const invoiceApi = createApi({
       }),
       invalidatesTags: ['Invoice'],
     }),
-    getInvoices: builder.query({
-      query: ({ page = 1, limit = 10 }) => `/invoices?page=${page}&limit=${limit}`,
+    getInvoicesForContract: builder.query({
+      query: ({ contractId, page = 1, limit = 10 }) => `/invoices/contracts/${contractId}?page=${page}&limit=${limit}`,
       providesTags: ['Invoice'],
     }),
-    getInvoicesForContract: builder.query({
-      query: ({ contractId, page = 1, limit = 10 }) =>
-        `/invoices/contracts/${contractId}?page=${page}&limit=${limit}`,
+    getInvoices: builder.query({
+      query: ({ page = 1, limit = 10 }) => `/invoices?page=${page}&limit=${limit}`,
       providesTags: ['Invoice'],
     }),
     getInvoice: builder.query({
@@ -45,14 +44,6 @@ export const invoiceApi = createApi({
       }),
       invalidatesTags: ['Invoice'],
     }),
-    rejectInvoice: builder.mutation({
-      query: ({ id, rejectionReason }) => ({
-        url: `/invoices/${id}/reject`,
-        method: 'POST',
-        body: { rejectionReason },
-      }),
-      invalidatesTags: ['Invoice'],
-    }),
     markInvoiceAsPaid: builder.mutation({
       query: ({ id, paymentMethod, transactionId }) => ({
         url: `/invoices/${id}/mark-paid`,
@@ -61,18 +52,11 @@ export const invoiceApi = createApi({
       }),
       invalidatesTags: ['Invoice'],
     }),
-    processInvoicePayment: builder.mutation({
-      query: (id) => ({
-        url: `/invoices/${id}/process-payment`,
+    rejectInvoice: builder.mutation({
+      query: ({ id, reason }) => ({
+        url: `/invoices/${id}/reject`,
         method: 'POST',
-      }),
-      invalidatesTags: ['Invoice'],
-    }),
-    uploadInvoiceAttachments: builder.mutation({
-      query: ({ id, formData }) => ({
-        url: `/invoices/${id}/attachments`,
-        method: 'POST',
-        body: formData,
+        body: { reason },
       }),
       invalidatesTags: ['Invoice'],
     }),
@@ -81,12 +65,10 @@ export const invoiceApi = createApi({
 
 export const {
   useCreateInvoiceMutation,
-  useGetInvoicesQuery,
   useGetInvoicesForContractQuery,
+  useGetInvoicesQuery,
   useGetInvoiceQuery,
   useApproveInvoiceMutation,
-  useRejectInvoiceMutation,
   useMarkInvoiceAsPaidMutation,
-  useProcessInvoicePaymentMutation,
-  useUploadInvoiceAttachmentsMutation,
+  useRejectInvoiceMutation,
 } = invoiceApi;

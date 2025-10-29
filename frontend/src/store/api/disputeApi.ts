@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../store';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  baseUrl: import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:3000/api',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
     if (token) {
@@ -39,19 +39,27 @@ export const disputeApi = createApi({
       query: (id) => `/disputes/${id}`,
       providesTags: ['Dispute'],
     }),
-    updateDispute: builder.mutation({
-      query: ({ id, ...data }) => ({
-        url: `/disputes/${id}`,
-        method: 'PUT',
-        body: data,
+    addDisputeMessage: builder.mutation({
+      query: ({ id, message, attachments }) => ({
+        url: `/disputes/${id}/messages`,
+        method: 'POST',
+        body: { message, attachments },
       }),
       invalidatesTags: ['Dispute'],
     }),
-    uploadDisputeEvidence: builder.mutation({
-      query: ({ id, formData }) => ({
-        url: `/disputes/${id}/evidence`,
+    resolveDispute: builder.mutation({
+      query: ({ id, resolution, resolution_notes }) => ({
+        url: `/disputes/${id}/resolve`,
         method: 'POST',
-        body: formData,
+        body: { resolution, resolution_notes },
+      }),
+      invalidatesTags: ['Dispute'],
+    }),
+    escalateDispute: builder.mutation({
+      query: ({ id, escalation_reason }) => ({
+        url: `/disputes/${id}/escalate`,
+        method: 'POST',
+        body: { escalation_reason },
       }),
       invalidatesTags: ['Dispute'],
     }),
@@ -62,6 +70,7 @@ export const {
   useCreateDisputeMutation,
   useGetDisputesQuery,
   useGetDisputeQuery,
-  useUpdateDisputeMutation,
-  useUploadDisputeEvidenceMutation,
+  useAddDisputeMessageMutation,
+  useResolveDisputeMutation,
+  useEscalateDisputeMutation,
 } = disputeApi;

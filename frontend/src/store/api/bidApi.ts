@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../store';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  baseUrl: import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:3000/api',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
     if (token) {
@@ -37,14 +37,6 @@ export const bidApi = createApi({
       query: (id) => `/bids/${id}`,
       providesTags: ['Bid'],
     }),
-    updateBid: builder.mutation({
-      query: ({ id, ...data }) => ({
-        url: `/bids/${id}`,
-        method: 'PUT',
-        body: data,
-      }),
-      invalidatesTags: ['Bid'],
-    }),
     withdrawBid: builder.mutation({
       query: (id) => ({
         url: `/bids/${id}/withdraw`,
@@ -52,11 +44,11 @@ export const bidApi = createApi({
       }),
       invalidatesTags: ['Bid'],
     }),
-    uploadBidAttachments: builder.mutation({
-      query: ({ id, formData }) => ({
-        url: `/bids/${id}/attachments`,
-        method: 'POST',
-        body: formData,
+    updateBid: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/bids/${id}`,
+        method: 'PUT',
+        body: data,
       }),
       invalidatesTags: ['Bid'],
     }),
@@ -68,7 +60,6 @@ export const {
   useGetBidsForRfqQuery,
   useGetBidComparisonQuery,
   useGetBidQuery,
-  useUpdateBidMutation,
   useWithdrawBidMutation,
-  useUploadBidAttachmentsMutation,
+  useUpdateBidMutation,
 } = bidApi;

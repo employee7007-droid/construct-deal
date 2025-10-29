@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../store';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  baseUrl: import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:3000/api',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
     if (token) {
@@ -17,7 +17,7 @@ export const adminApi = createApi({
   baseQuery,
   tagTypes: ['Admin'],
   endpoints: (builder) => ({
-    getDashboardStats: builder.query({
+    getDashboard: builder.query({
       query: () => '/admin/dashboard',
       providesTags: ['Admin'],
     }),
@@ -74,16 +74,6 @@ export const adminApi = createApi({
       },
       providesTags: ['Admin'],
     }),
-    getAllDisputes: builder.query({
-      query: ({ status, page = 1, limit = 10 }) => {
-        const params = new URLSearchParams();
-        if (status) params.append('status', status);
-        params.append('page', page.toString());
-        params.append('limit', limit.toString());
-        return `/admin/disputes?${params.toString()}`;
-      },
-      providesTags: ['Admin'],
-    }),
     getSystemLogs: builder.query({
       query: ({ level, startDate, endDate, search, page = 1, limit = 50 }) => {
         const params = new URLSearchParams();
@@ -107,7 +97,11 @@ export const adminApi = createApi({
       },
       providesTags: ['Admin'],
     }),
-    updatePlatformSettings: builder.mutation({
+    getSystemSettings: builder.query({
+      query: () => '/admin/settings',
+      providesTags: ['Admin'],
+    }),
+    updateSystemSettings: builder.mutation({
       query: (settings) => ({
         url: '/admin/settings',
         method: 'PUT',
@@ -115,23 +109,35 @@ export const adminApi = createApi({
       }),
       invalidatesTags: ['Admin'],
     }),
-    getPlatformSettings: builder.query({
-      query: () => '/admin/settings',
-      providesTags: ['Admin'],
+    suspendUser: builder.mutation({
+      query: ({ userId, reason }) => ({
+        url: `/admin/users/${userId}/suspend`,
+        method: 'POST',
+        body: { reason },
+      }),
+      invalidatesTags: ['Admin'],
+    }),
+    activateUser: builder.mutation({
+      query: (userId) => ({
+        url: `/admin/users/${userId}/activate`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Admin'],
     }),
   }),
 });
 
 export const {
-  useGetDashboardStatsQuery,
+  useGetDashboardQuery,
   useGetAllUsersQuery,
   useGetAllOrganizationsQuery,
   useGetAllVendorsQuery,
   useGetAllRfqsQuery,
   useGetAllContractsQuery,
-  useGetAllDisputesQuery,
   useGetSystemLogsQuery,
   useGetFinancialReportsQuery,
-  useUpdatePlatformSettingsMutation,
-  useGetPlatformSettingsQuery,
+  useGetSystemSettingsQuery,
+  useUpdateSystemSettingsMutation,
+  useSuspendUserMutation,
+  useActivateUserMutation,
 } = adminApi;

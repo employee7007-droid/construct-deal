@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../store';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  baseUrl: import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:3000/api',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
     if (token) {
@@ -18,10 +18,10 @@ export const contractApi = createApi({
   tagTypes: ['Contract'],
   endpoints: (builder) => ({
     awardContract: builder.mutation({
-      query: (data) => ({
+      query: ({ rfqId, bidId }) => ({
         url: '/contracts/award',
         method: 'POST',
-        body: data,
+        body: { rfqId, bidId },
       }),
       invalidatesTags: ['Contract'],
     }),
@@ -46,14 +46,6 @@ export const contractApi = createApi({
       }),
       invalidatesTags: ['Contract'],
     }),
-    declineContract: builder.mutation({
-      query: ({ id, reason }) => ({
-        url: `/contracts/${id}/decline`,
-        method: 'POST',
-        body: { reason },
-      }),
-      invalidatesTags: ['Contract'],
-    }),
     updateMilestoneProgress: builder.mutation({
       query: ({ contractId, milestoneId, comment, percentage, attachments }) => ({
         url: `/contracts/${contractId}/milestones/${milestoneId}/progress`,
@@ -70,11 +62,11 @@ export const contractApi = createApi({
       }),
       invalidatesTags: ['Contract'],
     }),
-    rejectMilestone: builder.mutation({
-      query: ({ contractId, milestoneId, comment }) => ({
-        url: `/contracts/${contractId}/milestones/${milestoneId}/reject`,
+    terminateContract: builder.mutation({
+      query: ({ id, reason }) => ({
+        url: `/contracts/${id}/terminate`,
         method: 'POST',
-        body: { comment },
+        body: { reason },
       }),
       invalidatesTags: ['Contract'],
     }),
@@ -86,8 +78,7 @@ export const {
   useGetContractsQuery,
   useGetContractQuery,
   useAcceptContractMutation,
-  useDeclineContractMutation,
   useUpdateMilestoneProgressMutation,
   useApproveMilestoneMutation,
-  useRejectMilestoneMutation,
+  useTerminateContractMutation,
 } = contractApi;

@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../store';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  baseUrl: import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:3000/api',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
     if (token) {
@@ -25,25 +25,36 @@ export const ratingApi = createApi({
       }),
       invalidatesTags: ['Rating'],
     }),
-    getRatingsForUser: builder.query({
-      query: ({ userId, page = 1, limit = 10 }) =>
-        `/ratings/users/${userId}?page=${page}&limit=${limit}`,
+    getVendorRatings: builder.query({
+      query: ({ vendorId, page = 1, limit = 10 }) => `/ratings/vendors/${vendorId}?page=${page}&limit=${limit}`,
       providesTags: ['Rating'],
     }),
-    getRatingsForContract: builder.query({
-      query: (contractId) => `/ratings/contracts/${contractId}`,
+    getClientRatings: builder.query({
+      query: ({ clientId, page = 1, limit = 10 }) => `/ratings/clients/${clientId}?page=${page}&limit=${limit}`,
       providesTags: ['Rating'],
     }),
-    getRating: builder.query({
-      query: (id) => `/ratings/${id}`,
-      providesTags: ['Rating'],
+    updateRating: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/ratings/${id}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['Rating'],
+    }),
+    deleteRating: builder.mutation({
+      query: (id) => ({
+        url: `/ratings/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Rating'],
     }),
   }),
 });
 
 export const {
   useCreateRatingMutation,
-  useGetRatingsForUserQuery,
-  useGetRatingsForContractQuery,
-  useGetRatingQuery,
+  useGetVendorRatingsQuery,
+  useGetClientRatingsQuery,
+  useUpdateRatingMutation,
+  useDeleteRatingMutation,
 } = ratingApi;

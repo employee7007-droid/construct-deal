@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../store';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  baseUrl: import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:3000/api',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
     if (token) {
@@ -17,6 +17,18 @@ export const categoryApi = createApi({
   baseQuery,
   tagTypes: ['Category'],
   endpoints: (builder) => ({
+    getCategoriesTree: builder.query({
+      query: () => '/categories/tree',
+      providesTags: ['Category'],
+    }),
+    getCategories: builder.query({
+      query: ({ page = 1, limit = 100 }) => `/categories?page=${page}&limit=${limit}`,
+      providesTags: ['Category'],
+    }),
+    getCategory: builder.query({
+      query: (id) => `/categories/${id}`,
+      providesTags: ['Category'],
+    }),
     createCategory: builder.mutation({
       query: (data) => ({
         url: '/categories',
@@ -24,25 +36,6 @@ export const categoryApi = createApi({
         body: data,
       }),
       invalidatesTags: ['Category'],
-    }),
-    getCategories: builder.query({
-      query: ({ parentId, search, page = 1, limit = 50 }) => {
-        const params = new URLSearchParams();
-        if (parentId) params.append('parentId', parentId);
-        if (search) params.append('search', search);
-        params.append('page', page.toString());
-        params.append('limit', limit.toString());
-        return `/categories?${params.toString()}`;
-      },
-      providesTags: ['Category'],
-    }),
-    getCategoryTree: builder.query({
-      query: () => '/categories/tree',
-      providesTags: ['Category'],
-    }),
-    getCategory: builder.query({
-      query: (id) => `/categories/${id}`,
-      providesTags: ['Category'],
     }),
     updateCategory: builder.mutation({
       query: ({ id, ...data }) => ({
@@ -63,10 +56,10 @@ export const categoryApi = createApi({
 });
 
 export const {
-  useCreateCategoryMutation,
+  useGetCategoriesTreeQuery,
   useGetCategoriesQuery,
-  useGetCategoryTreeQuery,
   useGetCategoryQuery,
+  useCreateCategoryMutation,
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,
 } = categoryApi;
