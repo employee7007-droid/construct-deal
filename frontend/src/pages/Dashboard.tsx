@@ -120,18 +120,24 @@ const Dashboard = () => {
                   <CardDescription>Common tasks</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button className="w-full justify-start" size="lg">
-                    <FileText className="mr-2 h-5 w-5" />
-                    Create New RFQ
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start" size="lg">
-                    <Users className="mr-2 h-5 w-5" />
-                    Browse Vendors
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start" size="lg">
-                    <Award className="mr-2 h-5 w-5" />
-                    View Contracts
-                  </Button>
+                  <Link to="/rfqs/create">
+                    <Button className="w-full justify-start" size="lg">
+                      <FileText className="mr-2 h-5 w-5" />
+                      Create New RFQ
+                    </Button>
+                  </Link>
+                  <Link to="/vendors">
+                    <Button variant="outline" className="w-full justify-start" size="lg">
+                      <Users className="mr-2 h-5 w-5" />
+                      Browse Vendors
+                    </Button>
+                  </Link>
+                  <Link to="/contracts">
+                    <Button variant="outline" className="w-full justify-start" size="lg">
+                      <Award className="mr-2 h-5 w-5" />
+                      View Contracts
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             </div>
