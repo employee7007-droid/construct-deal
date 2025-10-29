@@ -84,54 +84,98 @@ const RFQList = () => {
             </Card>
 
             <div className="grid gap-4">
-              {rfqs.map((rfq) => (
-                <Card key={rfq.id} className="hover:shadow-md transition-smooth cursor-pointer">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-2">
-                        <CardTitle className="text-xl">{rfq.title}</CardTitle>
-                        <CardDescription>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <Badge variant="outline">{rfq.category}</Badge>
-                            <span className="text-muted-foreground">•</span>
-                            <span>{rfq.building}</span>
-                            <span className="text-muted-foreground">•</span>
-                            <Badge variant={rfq.visibility === "public" ? "default" : "secondary"}>
-                              {rfq.visibility}
-                            </Badge>
-                          </div>
-                        </CardDescription>
+              {isLoading ? (
+                // Loading skeleton
+                Array(3).fill(0).map((_, i) => (
+                  <Card key={i} className="animate-pulse">
+                    <CardHeader>
+                      <Skeleton className="h-6 w-3/4 mb-2" />
+                      <Skeleton className="h-4 w-1/2" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between">
+                        <Skeleton className="h-12 w-32" />
+                        <Skeleton className="h-12 w-24" />
+                        <Skeleton className="h-12 w-24" />
+                        <Skeleton className="h-10 w-28" />
                       </div>
-                      <Badge
-                        variant={
-                          rfq.status === "active" ? "default" : rfq.status === "closed" ? "secondary" : "outline"
-                        }
-                      >
-                        {rfq.status}
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Estimated Budget</p>
-                        <p className="text-lg font-semibold text-foreground">{rfq.budget}</p>
-                      </div>
-                      <div className="space-y-1 text-right">
-                        <p className="text-sm font-medium text-muted-foreground">Bids Received</p>
-                        <p className="text-lg font-semibold text-primary">{rfq.bids}</p>
-                      </div>
-                      <div className="space-y-1 text-right">
-                        <p className="text-sm font-medium text-muted-foreground">Close Date</p>
-                        <p className="text-lg font-semibold text-foreground">
-                          {new Date(rfq.closeDate).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <Button>View Details</Button>
-                    </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : error ? (
+                <Card>
+                  <CardContent className="text-center py-8">
+                    <p className="text-muted-foreground">Error loading RFQs. Please try again later.</p>
                   </CardContent>
                 </Card>
-              ))}
+              ) : rfqs.length === 0 ? (
+                <Card>
+                  <CardContent className="text-center py-8">
+                    <p className="text-muted-foreground">
+                      No RFQs found. {" "}
+                      <Link to="/rfqs/create" className="text-primary hover:underline">
+                        Create your first RFQ
+                      </Link>
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                rfqs.map((rfq: any) => (
+                  <Link key={rfq.id} to={`/rfqs/${rfq.id}`}>
+                    <Card className="hover:shadow-md transition-smooth cursor-pointer">
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-2">
+                            <CardTitle className="text-xl">{rfq.title}</CardTitle>
+                            <CardDescription>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <Badge variant="outline">{rfq.categoryName || "General"}</Badge>
+                                <span className="text-muted-foreground">•</span>
+                                <span>{rfq.buildingName || "Building"}</span>
+                                <span className="text-muted-foreground">•</span>
+                                <Badge variant={rfq.visibility === "public" ? "default" : "secondary"}>
+                                  {rfq.visibility}
+                                </Badge>
+                              </div>
+                            </CardDescription>
+                          </div>
+                          <Badge
+                            variant={
+                              rfq.status === "active" ? "default" : rfq.status === "closed" ? "secondary" : "outline"
+                            }
+                          >
+                            {rfq.status}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-muted-foreground">Estimated Budget</p>
+                            <p className="text-lg font-semibold text-foreground">
+                              {rfq.estBudgetMin && rfq.estBudgetMax 
+                                ? formatCurrency(rfq.estBudgetMin, rfq.estBudgetMax)
+                                : "Budget not specified"
+                              }
+                            </p>
+                          </div>
+                          <div className="space-y-1 text-right">
+                            <p className="text-sm font-medium text-muted-foreground">Bids Received</p>
+                            <p className="text-lg font-semibold text-primary">{rfq.bidCount || 0}</p>
+                          </div>
+                          <div className="space-y-1 text-right">
+                            <p className="text-sm font-medium text-muted-foreground">Close Date</p>
+                            <p className="text-lg font-semibold text-foreground">
+                              {new Date(rfq.closeDate).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <Button onClick={(e) => e.preventDefault()}>View Details</Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))
+              )}
             </div>
           </div>
         </main>
