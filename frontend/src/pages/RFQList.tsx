@@ -36,7 +36,7 @@ const RFQList = () => {
     <div className="min-h-screen bg-background">
       <Navbar userRole={user?.role || "facility_manager"} userName={user?.name || "User"} />
       <div className="flex">
-        <Sidebar userRole="facility_manager" activePage="rfqs" />
+        <Sidebar userRole={user?.role || "facility_manager"} activePage="rfqs" />
         <main className="flex-1 p-6">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
