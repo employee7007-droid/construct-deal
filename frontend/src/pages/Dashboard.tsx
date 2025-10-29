@@ -1,17 +1,41 @@
 import { FileText, Users, Award, TrendingUp } from "lucide-react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
 import StatsCard from "@/components/dashboard/StatsCard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useGetRfqsQuery } from "@/store/api/rfqApi";
+import { useGetVendorsQuery } from "@/store/api/vendorApi";
+import { useGetContractsQuery } from "@/store/api/contractApi";
+import { useAppSelector } from "@/store/hooks";
 
 const Dashboard = () => {
-  const recentRFQs = [
-    { id: "1", title: "HVAC System Installation", status: "active", bids: 12, closingIn: "3 days" },
-    { id: "2", title: "Building Electrical Upgrade", status: "active", bids: 8, closingIn: "5 days" },
-    { id: "3", title: "Fire Safety System", status: "closed", bids: 15, closingIn: "Closed" },
-  ];
+  const { user } = useAppSelector((state) => state.auth);
+  
+  // Fetch data from APIs
+  const { data: rfqsData } = useGetRfqsQuery({ page: 1, limit: 5 });
+  const { data: vendorsData } = useGetVendorsQuery({ page: 1, limit: 1 });
+  const { data: contractsData } = useGetContractsQuery({ page: 1, limit: 1 });
+  
+  const recentRFQs = rfqsData?.data?.rfqs || [];
+  const totalVendors = vendorsData?.data?.pagination?.total || 0;
+  const totalContracts = contractsData?.data?.pagination?.total || 0;
+  const activeRFQs = recentRFQs.filter(rfq => rfq.status === 'active').length;
+  
+  // Calculate days until close for each RFQ
+  const getRFQClosingTime = (closeDate: string) => {
+    const today = new Date();
+    const close = new Date(closeDate);
+    const diffTime = close.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) return "Closed";
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "1 day";
+    return `${diffDays} days`;
+  };
 
   return (
     <div className="min-h-screen bg-background">
