@@ -52,29 +52,26 @@ const Dashboard = () => {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <StatsCard
                 title="Active RFQs"
-                value={12}
+                value={activeRFQs}
                 icon={FileText}
-                trend={{ value: "+2 this week", positive: true }}
                 variant="default"
               />
               <StatsCard
-                title="Total Bids"
-                value={87}
+                title="Total RFQs"
+                value={recentRFQs.length}
                 icon={TrendingUp}
-                trend={{ value: "+15%", positive: true }}
                 variant="success"
               />
               <StatsCard
                 title="Active Contracts"
-                value={5}
+                value={totalContracts}
                 icon={Award}
                 variant="warning"
               />
               <StatsCard
                 title="Registered Vendors"
-                value={234}
+                value={totalVendors}
                 icon={Users}
-                trend={{ value: "+8 this month", positive: true }}
               />
             </div>
 
