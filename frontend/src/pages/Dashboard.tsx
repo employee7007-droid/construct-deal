@@ -83,23 +83,33 @@ const Dashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {recentRFQs.map((rfq) => (
-                      <div key={rfq.id} className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/50 transition-smooth">
-                        <div className="space-y-1">
-                          <p className="font-medium text-foreground">{rfq.title}</p>
-                          <div className="flex items-center gap-2">
-                            <Badge variant={rfq.status === "active" ? "default" : "secondary"}>
-                              {rfq.status}
-                            </Badge>
-                            <span className="text-sm text-muted-foreground">{rfq.bids} bids</span>
+                    {recentRFQs.length > 0 ? (
+                      recentRFQs.map((rfq: any) => (
+                        <div key={rfq.id} className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/50 transition-smooth">
+                          <div className="space-y-1">
+                            <p className="font-medium text-foreground">{rfq.title}</p>
+                            <div className="flex items-center gap-2">
+                              <Badge variant={rfq.status === "active" ? "default" : "secondary"}>
+                                {rfq.status}
+                              </Badge>
+                              <span className="text-sm text-muted-foreground">{rfq.bidCount || 0} bids</span>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm font-medium text-muted-foreground">
+                              {getRFQClosingTime(rfq.closeDate)}
+                            </p>
+                            <Link to={`/rfqs/${rfq.id}`}>
+                              <Button variant="ghost" size="sm" className="mt-1">View</Button>
+                            </Link>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium text-muted-foreground">{rfq.closingIn}</p>
-                          <Button variant="ghost" size="sm" className="mt-1">View</Button>
-                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <p>No RFQs found. <Link to="/rfqs/create" className="text-primary hover:underline">Create your first RFQ</Link></p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </CardContent>
               </Card>
