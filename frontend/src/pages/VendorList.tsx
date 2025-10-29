@@ -37,7 +37,7 @@ const VendorList = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar userRole="facility_manager" userName="John Smith" />
+      <Navbar userRole={user?.role || "facility_manager"} userName={user?.name || "User"} />
       <div className="flex">
         <Sidebar userRole="facility_manager" activePage="vendors" />
         <main className="flex-1 p-6">
