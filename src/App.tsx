@@ -19,6 +19,7 @@ import ContractDetail from "./pages/ContractDetail";
 import InvoiceList from "./pages/InvoiceList";
 import InvoiceDetail from "./pages/InvoiceDetail";
 import BuildingList from "./pages/BuildingList";
+
 import DisputeList from "./pages/DisputeList";
 import NotFound from "./pages/NotFound";
 
@@ -122,6 +123,30 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            {/* <Route
+              path="/buildings/new"
+              element={
+                <ProtectedRoute allowedRoles={["org_owner", "facility_manager"]}>
+                  <CreateBuilding />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/buildings/:id"
+              element={
+                <ProtectedRoute allowedRoles={["org_owner", "facility_manager"]}>
+                  <BuildingDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/buildings/:id/edit"
+              element={
+                <ProtectedRoute allowedRoles={["org_owner", "facility_manager"]}>
+                  <EditBuilding />
+                </ProtectedRoute>
+              }
+            /> */}
             <Route
               path="/disputes"
               element={
@@ -130,6 +155,8 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            {/* Admin Routes */}
+           
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
